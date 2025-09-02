@@ -1,0 +1,34 @@
+name: Crypto Arbitrage Bot
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Run every 5 minutes
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  run-arbitrage-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run arbitrage bot
+      run: python arbitrage_bot.py
+      
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: arbitrage-results
+        path: arbitrage_results.csv
+        if-no-files-found: ignore
+        retention-days: 7
